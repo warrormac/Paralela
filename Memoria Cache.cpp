@@ -26,7 +26,7 @@ int main()
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 	duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
-	std::cout << "first duration" << time_span.count() << " segundos." << endl;
+	std::cout << "Primer For: " << time_span.count() << " segundos." << endl;
 
 	fill(y.begin(), y.end(), 0);
 
@@ -41,7 +41,7 @@ int main()
 	high_resolution_clock::time_point t21 = high_resolution_clock::now();
 
 	duration<double> duration1 = duration_cast<duration<double>>(t21 - t11);
-	std::cout << "second duration" << duration1.count() << " segundos." << endl;
+	std::cout << "Segundo For: " << duration1.count() << " segundos." << endl;
 
 	return 0;
 }
