@@ -1,0 +1,197 @@
+Update:
+	sudo apt-get update
+	sudo apt-get upgrade
+
+IP address
+
+	sudo apt-get install net-tools
+
+		MAster:	192.168.115.130
+		Client 1:	192.168.115.131
+		Client 2:	192.168.115.132
+
+SSH
+
+	sudo apt-get install openssh-server
+	sudo apt-get install openssh-client
+
+Directorio a SSH
+
+	mkdir ~/.ssh
+	chmod 700 ~/.ssh
+
+Generamos llave RSA
+
+	ssh-keygen -t rsa
+		/home/master/.ssh/id_rsa_master
+		/home/salve/.ssh/id_rsa_slave1
+		/home/slave/.ssh/id_rsa_slave2
+
+Copiamos id_rsa_xxx.pub
+
+	Revisar parte 2.1 y 2.2 
+	
+	En Master
+	
+		cat /home/master/.ssh/id_rsa_slave1.pub >> /home/master/.ssh/authorized_keys
+		cat /home/master/.ssh/id_rsa_slave2.pub >> /home/master/.ssh/authorized_keys
+
+	En Client
+		
+		cat /home/salve/.ssh/id_rsa_master.pub >> /home/salve/.ssh/authorized_keys
+
+
+Editamos Archivo /etc/ssh/sshd_config y Restart para todas las maquinas
+
+	Instalamos Gedit
+	
+		sudo apt-get install gedit	
+		sudo gedit /etc/ssh/sshd_config
+			
+			Agregar:
+			
+				PubkeyAuthentization yes
+				RSAAuthentication yes
+
+		Reniciamos 
+		
+			sudo service ssh restart
+
+Probamos
+
+	Master
+		
+		ssh master@192.168.115.130
+
+	Client
+		
+		ssh salve@192.168.115.131
+		ssh slave@192.168.115.132	
+
+2.1 Master
+
+	Instalamos NFS en Master
+	
+		sudo apt-get install nfs-kernel-server
+		sudo mkdir -p /home/master/Desktop/sharefolder
+		sudo chown nobody:nogroup /home/master/Desktop/sharefolder
+		sudo chmod 777 /home/master/Desktop/sharefolder
+
+	Instalamos Gedit
+	
+		sudo apt-get install gedit	
+		sudo gedit /etc/exports
+
+	Compartimos directorios
+
+		/home/master/Desktop/sharefolder 192.168.115.131(rw,sync,no_subtree_check)
+		/home/master/Desktop/sharefolder 192.168.115.132(rw,sync,no_subtree_check)
+
+		sudo exportfs -a
+	
+		sudo systemctl restart nfs-kernel-server
+
+	Revismaos estado de Firewall	
+		
+		sudo ufw status
+		sudo ufw disable (si esta activo)
+
+
+2.2 Client
+	
+	Instalamos NFS en clientes
+
+		sudo apt-get install nfs-common
+
+	Creamos directorio
+		
+		sudo mkdir -p /home/salve/Desktop/sharefolder
+		sudo mkdir -p /home/slave/Desktop/sharefolder
+
+	Montamos
+		
+		sudo mount 
+
+3.1 
+
+	Instalando OpenMPI (for all)
+	
+		sudo apt-get install gcc
+		sudo apt-get install openmpi-common libopenmpi-dev libgtk2.0-dev
+
+	Descargar archivos comprimidos
+		
+		https://www.open-mpi.org/software/ompi/v4.0/
+		Unzip en Desktop
+			tar -xvf /home/master/Desktop/ 
+
+		Instalamos openMPI
+			
+			cd /home/master/Desktop/ompi/v4.0/ 
+
+			./configure --prefix="/home/master/.openmpi"  (master)
+			./configure --prefix="/home/salve/.openmpi"   (cliente 1)
+			./configure --prefix="/home/slave/.openmpi"   (cliente 2)
+
+			make
+
+			sudo make install
+
+		Exportamos el PATH
+
+			export PATH="$PATH:/home/master/.openmpi/bin"
+			export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/master/.openmpi/lib"
+			
+			export PATH="$PATH:/home/salve/.openmpi/bin"
+			export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/salve/.openmpi/lib"
+			
+			export PATH="$PATH:/home/slave/.openmpi/bin"
+			export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/slave/.openmpi/lib"
+
+4.1
+	Test
+	
+		Editar en Master
+	
+			sudo gedit /etc/hosts
+	
+				127.0.0.1	local host
+				192.168.115.131	slave1
+				192.168.115.132	slave2
+
+				Disable rest
+	
+		Editar en Client
+	
+			sudo gedit /etc/hosts
+	
+				127.0.0.1	local host
+				192.168.115.130	master
+
+				Disable rest
+
+		Compilamos
+	
+			MAster
+				Descargar ejemplo
+					https://www.dropbox.com/sh/mhwg5n9oajtme98/AAAAlCd5GQDRP9WdMe13Ydija?dl=0&preview=mpi-prime.c
+
+				Lo compilamos en desktop
+					 mpicc mpi-prime.c  -o ./outputfile
+
+				copiamos el outputfile en sharedfolder
+
+		Comandos 
+	
+			$ mpicc −o mpi hello.c
+			$  mpirun −np <number of processes> mpi
+			$  mpirun −np <number of processes> --oversubscribe ./mpi	
+			
+
+sudo apt-get install
+
+sudo apt-get
+
+
+
+
