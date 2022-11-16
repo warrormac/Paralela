@@ -68,28 +68,7 @@ int main()
 			b[y][x] = rand() % 20;
 		}
 	}
-/*
-    //imprimiendo matriz A
-    printf("VALORES DE MATRIZ A \n");
-	for (int y = 0; y < WIDTH; y++)
-	{
-		for (int x = 0; x < WIDTH; x++)
-		{
-			printf("%5d", a[y][x]);
-		}
-		printf("\n");
-	}
 	
-	printf("\n\n VALORES DE MATRIZ B \n");
-	for (int y = 0; y < WIDTH; y++)
-	{
-		for (int x = 0; x < WIDTH; x++)
-		{
-			printf("%5d", b[y][x]);
-		}
-		printf("\n\n");
-	}
-*/	
 	//device side data
 	int* dev_a = 0;
 	int* dev_b = 0;
@@ -129,15 +108,7 @@ int main()
 	cudaFree(dev_a);
 	cudaFree(dev_b);
 
-/*	//print the result
-	printf("RESULTADO DE MULTIPLICACION TILED CON SHARED MEMORY -> MATRIZ C \n");
-	for (int y = 0; y < WIDTH; y++) {
-		for (int x = 0; x < WIDTH; x++) {
-			printf("%10d", c[y][x]);
-		}
-		printf("\n");
-	}
-*/	
+	
 	printf("%fn <-TIME ", milliseconds);
 	return 0;
 }
