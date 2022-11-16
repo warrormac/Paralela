@@ -13,7 +13,7 @@
 	}\
 }while(0)
 #endif
-#define Tile_size 16
+#define Tile_size 8
 
 						
 __global__ void MatrixMulKernel(int* d_M, int* d_N, int* d_P, int Width) {
